@@ -1,0 +1,33 @@
+body {
+    background-color: #f5f5f5;
+    font-family: 'Helvetica Neue', sans-serif;
+  }
+  
+.container {
+max-width: 600px;
+}
+
+.form-control:focus {
+border-color: #3c40c6;
+box-shadow: 0 0 0 0.2rem rgba(60, 64, 198, 0.25);
+}
+
+.btn-primary {
+background-color: #3c40c6;
+border-color: #3c40c6;
+}
+
+.btn-primary:hover {
+background-color: #1d1d5a;
+border-color: #1d1d5a;
+}
+
+.btn-primary:focus {
+box-shadow: 0 0 0 0.2rem rgba(60, 64, 198, 0.5);
+}
+
+.btn-primary:active {
+background-color: #1d1d5a;
+border-color: #1d1d5a;
+box-shadow: none;
+}

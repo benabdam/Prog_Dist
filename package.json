@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "connect-redis": "^8.0.1",
+    "ioredis": "^5.4.2"
+  }
+}

@@ -1,0 +1,211 @@
+<!-- gerant.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Page de gestion du site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-image: url("media/back.jpeg");
+      background-repeat: no-repeat;
+      background-size: contain;
+      backdrop-filter: blur(10px);
+      height: 100vh;
+    }
+
+    .container-fluid {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.5);
+      backdrop-filter: blur(10px);
+    }
+
+    .jumbotron {
+      background-color: transparent;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .btn {
+      background-color: #1d3557;
+      color: #fff;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-label {
+      font-weight: bold;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .form-button {
+      background-color: #1d3557;
+      color: #fff;
+      padding: 8px 15px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    .product-list-container {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .product-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .product-item {
+      margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      border-radius: 5px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-info {
+      margin-bottom: 5px;
+    }
+
+    
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="jumbotron">
+      <h1 class="text-center">Interface du gérant</h1>
+      <% if (notification) { %> <!-- Ajout de cette condition pour afficher la notification -->
+        <div class="row">
+          <div class="col-md-12">
+            <div id="notification" class="alert alert-info" role="alert">
+              <%= notification %>
+            </div>
+          </div>
+        </div>
+      <% } %>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="mb-4">
+            <h4>Ajouter des éléments au stock:</h4>
+            <form action="/gerant/ajouter" method="post" id="addStockForm">
+              <div class="form-group">
+                <label for="id_prod" class="form-label">Id :</label>
+                <input type="number" id="id_prod" name="id_prod" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="nb_stock" class="form-label">Quantité:</label>
+                <input type="number" id="nb_stock" name="nb_stock" class="form-input" required>
+              </div>
+              <div class="form-group">
+                <label for="taille" class="form-label">Taille :</label>
+                <select id="taille" name="taille" class="form-input" required>
+                  <option value="" disabled selected>Choisir une taille</option>
+                  <option value="S">S</option>
+                  <option value="M">M</option>
+                  <option value="L">L</option>
+                  <option value="Sans taille">Sans taille</option>
+                  <option value="Taille unique">Taille unique</option>
+                </select>
+              </div>
+              <button type="submit" class="form-button">Ajouter au stock</button>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-4">
+            <h4>Supprimer une commande enregistrée:</h4>
+            <form action="/gerant/supprimer" method="post" id="deleteOrderForm">
+              <div class="form-group">
+                <label for="orderId" class="form-label">ID de la commande :</label>
+                <input type="number" id="orderId" name="orderId" class="form-input" required>
+              </div>
+              <button type="submit" class="form-button">Supprimer la commande</button>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-4">
+            <h4>Liste des produits dans le stock:</h4>
+            <div class="product-list-container">
+              <ul class="product-list">
+                <% products.forEach(function(product) { %>
+                <li class="product-item">
+                  <div class="row">
+                    <div class="col-md-6 product-column">
+                      <h4 class="product-name"style="text-decoration: underline;"><%= product.p_name %></h4>
+                      <img src="<%= product.img %>" alt="<%= product.p_name %>" class="card-img-top product-image" data-image="<%= product.img %>">
+                      <p class="product-info">ID : <%= product.id %></p>
+                      <p class="product-info">Prix : <%= product.price %> €</p>
+                      <% product.stocks.forEach(function(stock) { %>
+                        <% if (stock.nb_stock > 0) { %>
+                          <p class="product-info">Quantité (<%= stock.taille %>) : <%= stock.nb_stock %></p>
+                        <% } else { %>
+                          <p class="product-info">Quantité (<%= stock.taille %>) : Stock épuisé</p>
+                        <% } %>
+                      <% }); %>
+                    </div>
+                    <div class="col-md-6 product-column">
+                    </div>
+                  </div>
+                </li>
+                <% }); %>
+              </ul>
+            </div>
+          </div>
+        </div>
+                
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fonction pour réinitialiser les formulaires
+    function resetForms() {
+      document.getElementById("addStockForm").reset();
+      document.getElementById("deleteOrderForm").reset();
+    }
+    // Exécuter la fonction de réinitialisation des formulaires lorsque la page se charge
+    window.onload = resetForms;
+  </script>
+  <script>
+    // Fonction pour cacher le message de notification après quelques secondes
+    function hideNotification() {
+      const notification = document.getElementById('notification');
+      if (notification) {
+        setTimeout(() => {
+          notification.style.display = 'none';
+        }, 5000); // Le message de notification sera caché après 5 secondes (5000 millisecondes)
+      }
+    }
+
+    // Exécuter la fonction pour cacher le message de notification lorsque la page se charge
+    window.onload = hideNotification;
+  </script>
+  
+</body>
+</html>
+
+
+

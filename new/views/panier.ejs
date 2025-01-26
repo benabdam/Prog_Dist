@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Mon panier </title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .product-card {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .product-card img {
+      width: 100px;
+      height: 100%;
+      margin-right: 20px;
+    }
+    .navbar-custom {
+      background-color: lightgray;
+    }
+    .navbar-middle-item,
+    .navbar-custom .navbar-left-item,
+    .navbar-custom .navbar-right-item {
+      font-weight: bold;
+    }
+
+    .product-card .product-info {
+      flex-grow: 1;
+    }
+
+    .product-card .product-info h5 {
+      margin-bottom: 5px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .product-card .product-info p {
+      margin-bottom: 10px;
+    }
+
+    .product-card .product-info .price {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .product-card .product-info .quantity-select {
+      width: 80px;
+    }
+
+    .summary-card {
+      background-color: lightgray;
+      padding: 20px;
+    }
+
+    .summary-card table th tr {
+      width: 150px;
+      font-weight: normal;
+      color: #555;
+    }
+
+    .summary-card table td {
+      font-weight: bold;
+    }
+
+    .summary-card .checkout-btn {
+      margin-top: 20px;
+      width: 100%;
+      background-color: darkorange;
+    }
+    .a {
+      margin-top: 20px;
+      width: 100%;
+      background-color: darkorange;
+    }
+    .logo-img {
+      width: 170px; 
+      height: auto; /* La hauteur sera ajustée automatiquement pour maintenir les proportions de l'image */
+    }
+
+    .quantity-select {
+      margin-left: 10px;
+      width: 110px; 
+      height: 36px; 
+    }
+  </style>
+</head>
+<body>
+    <nav class="navbar navbar-custom">
+        <div class="container">
+            <span class="navbar-left-item">Essayez d'abord, <span style="color: darkorange ;font-weight: bold;">payez après</span></span>
+            <span class="navbar-middle-item">LIVRAISON & RETOUR <span style="color: darkorange ;font-weight: bold;">GRATUITS*</span></span>
+            <span class="navbar-right-item">Retour et <span style="color: darkorange ;font-weight: bold;">remboursement</span></span> 
+        </div>
+        </nav>
+
+        <nav class="navbar navbar-light bg-white">
+            <a href="/main_page">
+                <img src="media/logo.jpg" alt="Logo" class="navbar-brand logo-img">
+              </a>        
+        </nav>
+  <div class="container">
+    <h1>Mon panier</h1>
+    <div class="row">
+      <div class="col-md-8">
+        <% if (products.length > 0) { %>
+          <% products.forEach(product => { %>
+            <div class="product-card">
+              <img src="<%= product.img %>" alt="<%= product.name %>">
+              <div class="product-info">
+                <h5><%= product.descrip %></h5>
+                <p>Taille: <%= product.size %></p>
+                <p class="price">Prix: <%= product.price %> €</p>
+                <div class="d-flex align-items-center">
+                <button class="btn btn-danger btn-remove" onclick="removeCartItem('<%= product.product_id %>')">Supprimer</button>
+                <select class="quantity-select" name="quantity" data-productId="<%= product.id %>" onclick="updateCartItemQuantity('<%= product.product_id %>', this.value)">
+                    <% for (let i = 1; i <= product.nb_stock; i++) { %>
+                        <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                </select>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        <% } else { %>
+          <p>Votre panier est vide.</p>
+        <% } %>
+      </div>
+      <% if (products.length > 0) { %>
+        <% products.forEach((product, index) => { %>
+          <% if (index === 0) { %>
+            <div class="col-md-4">
+              <div class="card summary-card">
+                <div class="card-body">
+                  <h5 class="card-title">Récapitulatif du panier</h5>
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>Nombre d'article</th>
+                        <td><%= product.total_quantite %></td>
+                      </tr>
+                      <tr>
+                        <th>Sous-total</th>
+                        <td><%= first %> €</td>
+                      </tr>
+                      <tr>
+                        <th>Reduction</th>
+                        <td><%= reduction %> €</td>
+                      </tr>
+                      <tr>
+                        <th>Livraison</th>
+                        <td>0 €</td>
+                      </tr>
+                      <tr>
+                        <th>Total</th>
+                        <td><%= price %> €</td>
+                      </tr>
+                      <tr>
+                        <th colspan="2" style="text-align: left;">
+                          <span id="code-toggle" style="cursor: pointer;">Code promo (facultatif)<i class="fas fa-chevron-down"></i></span>
+                        </th>
+                      </tr>
+                      <tr id="code-row" style="display: none;">
+                        <td colspan="2">
+                          <div>
+                            <span>Entrer le code de réduction:</span>
+                            <input type="text" id="code-input">
+                          </div>
+                          <div>
+                            <button id="apply-code-btn" class="btn btn-primary a" onclick="Reduction()">Appliquer/Supprimer code</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <a href="/validation" class="btn btn-primary checkout-btn">Valider ma commande</a>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        <% }) %>
+      <% } %>
+      
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        </body>
+</html>
+
+
+
+
+
+<script>
+ var codeToggle = document.getElementById('code-toggle');
+  var codeRow = document.getElementById('code-row');
+
+  codeToggle.addEventListener('click', function () {
+    codeRow.style.display = codeRow.style.display === 'none' ? 'table-row' : 'none';
+  });
+
+
+  function Reduction() {
+  var codeInput = document.getElementById('code-input').value; // Récupérer la valeur du champ texte
+  // Envoyer une requête POST au serveur avec la valeur du code de réduction
+  fetch('/reduction', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ code: codeInput }) // Inclure la valeur du code de réduction dans le corps de la requête POST
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        var message = "Code appliqué";
+        console.log(message);
+       location.reload(); // Recharger la page après avoir traité la réponse
+      }
+    })
+    .catch(error => console.error(error));
+}
+
+
+
+// Fonction pour mettre à jour la quantité dans la table panier
+function updateCartItemQuantity(productId, quantity) {
+  // Envoyez une requête POST au serveur pour mettre à jour la quantité dans la table panier
+  fetch('/updateCartItemQuantity', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ productId, quantity }) // Inclure l'ID du produit et la nouvelle quantité dans le corps de la requête POST
+  })
+    .then(response => response.json())
+    .then(data => {
+        location.reload();
+    })
+    .catch(error => console.error(error));
+}
+
+function removeCartItem(productId) {
+  // Envoyez une requête POST au serveur pour supprimer l'article du panier et de la table "panier"
+  fetch('/removeFromCart', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ productId }) // Inclure l'ID du produit dans le corps de la requête POST
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Si la suppression est réussie, actualisez la page pour mettre à jour le panier
+      location.reload();
+    })
+    .catch(error => console.error(error));
+}
+
+
+</script>

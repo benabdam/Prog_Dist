@@ -1,0 +1,344 @@
+<!-- main.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma Friperie</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .navbar-custom {
+      background-color: lightgray;
+    }
+    .navbar-middle-item,
+    .navbar-custom .navbar-left-item,
+    .navbar-custom .navbar-right-item {
+      font-weight: bold;
+    }
+    .navbar-icon {
+    font-size: 1.5rem;
+  }
+
+  .banner {
+    background-color: darkorange;
+    color: white;
+    padding: 20px 0;
+  }
+
+  .banner-image {
+    width: 450px;
+    height: auto;
+  }
+  .logo-img {
+  width: 170px; 
+  height: auto; 
+}
+
+    .image-wrapper {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        width: 40px;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: none;
+        z-index: 1;
+    }
+
+    .icon-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    .icon-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 30px;
+        height: 30px;
+        background-color: white;
+        color: black;
+        border-radius: 50%;
+        margin-bottom: 10px;
+        text-decoration: none;
+    }
+
+    .icon-btn i {
+        font-size: 1rem;
+    }
+
+    .icon-btn + .icon-btn {
+        margin-top: 10px;
+    }
+
+    .card-img-top {
+      object-fit: cover;
+      width: 100%;
+      height: 400px; 
+      border: 1px solid black; 
+    }
+    .size-dropdown {
+      width: 100%;
+      height: 30px;
+      border: 1px solid black;
+    }
+    .code-promo-container {
+    display: flex;
+    align-items: center;
+    margin-top: 30px;
+  }
+
+  .code-promo-container p {
+    margin-right: 10px;
+  }
+
+
+
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-custom">
+    <div class="container">
+      <span class="navbar-left-item">Essayez d'abord, <span style="color: darkorange ;font-weight: bold;">payez après</span></span>
+      <span class="navbar-middle-item">LIVRAISON & RETOUR <span style="color: darkorange ;font-weight: bold;">GRATUITS*</span></span>
+      <span class="navbar-right-item">Retour et <span style="color: darkorange ;font-weight: bold;">remboursement</span></span> 
+    </div>
+  </nav>
+ 
+  <nav class="navbar navbar-light bg-white">
+    <img src="media/logo.jpg" alt="Logo" class="navbar-brand logo-img">
+    <a class="navbar-brand ml-auto navbar-icon" href="/panier" onclick="displayCart = true;">
+      <i class="bi bi-cart3 text-black"></i>
+        <span class="badge badge-danger rounded-circle" id="cart-count">0</span>
+    </a>
+    <a class="navbar-brand navbar-icon" href="/favorite" onclick="displayCart = true;">
+        <i class="bi bi-heart-fill text-black"></i>
+        <span class="badge badge-danger rounded-circle" id="fav-count" >0</span>
+    </a>
+    <a class="navbar-brand navbar-icon" href="#">
+        <i class="bi bi-person-circle text-black"></i>
+    </a>
+</nav>
+
+
+<div class="banner">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="text-left">
+      <h4 class="mb-1 text-dark font-weight-bold h2">Qu'allez-vous porter cet été ?</h4>
+      <p class="mb-3 text-dark font-weight-bold h3"> Nos nouveaux looks et accessoires</p>
+      <div class="code-promo-container">
+        <p class="mb-0 text-dark font-weight-bold h4">
+          Code promo* <span id="copy-icon" onclick="copyPromoCode()"><i class="fas fa-copy"></i></span>
+        </p>
+        <p class="mb-0 text-dark font-weight-bold h3">
+          <span id="promo-code">LESBEAUXJOURS</span>
+        </p>
+      </div>
+      <p id="time-remaining" class="mb-3 text-dark font-weight-bold h4"></p>
+    </div>
+    <img src="media/aa.webp" alt="Image" class="banner-image">
+  </div>
+</div>
+
+
+
+<div class="container mt-4">
+  <div class="row">
+    <% products.forEach(function(product) { %>
+    <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+        <div class="image-wrapper">
+          <img src="<%= product.img %>" alt="<%= product.p_name %>" class="card-img-top product-image" data-image="<%= product.img %>">
+          <div class="overlay">
+            <div class="icon-container" id="product-<%= product.id %>">
+              <a href="#" class="icon-btn view-icon" data-toggle="modal" data-target="#imageModal"><i class="bi bi-eye"></i></a>
+              <a href="#" class="icon-btn cart-icon" onclick="addToCart(this)" data-productId="<%= product.id %>"><i class="bi bi-cart"></i></a>
+              <a href="#" class="icon-btn heart-icon" onclick="addToFav(this)"><i class="bi bi-heart"></i></a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title"><%= product.p_name %></h5>
+          <p class="card-text"><%= product.descrip %></p>
+          <h6><%= product.price %> €</h6>
+          <select class="size-dropdown" name="product-size">
+            <% product.stocks.forEach(function(stock) { %>
+              <% if (stock.nb_stock > 0) { %>
+                <option value="<%= stock.taille %>"><%= stock.taille %> : (<%= stock.nb_stock %> en Stock)</option>
+              <% } else { %>
+                <option value="" style="color: red; text-decoration: line-through;" disabled><%= stock.taille %> (Stock: <%= stock.nb_stock %>)</option>
+              <% } %>
+            <% }); %>
+          </select>
+        </div>
+      </div>
+    </div>
+    <% }); %>
+  </div>
+</div>
+
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+
+function copyPromoCode() {
+  const promoCode = document.getElementById('promo-code').innerText;
+  navigator.clipboard.writeText(promoCode)
+    .then(() => {
+      alert('Le code promo a été copié avec succès !');
+    })
+    .catch((error) => {
+      console.error('Une erreur est survenue lors de la copie du code promo :', error);
+    });
+}
+
+function formatTimeRemaining(days, hours, minutes, seconds) {
+  const formattedDays = days.toString().padStart(2, '0');
+  const formattedHours = hours.toString().padStart(2, '0');
+  const formattedMinutes = minutes.toString().padStart(2, '0');
+  const formattedSeconds = seconds.toString().padStart(2, '0');
+
+  return `${formattedDays}j ${formattedHours}h ${formattedMinutes}min ${formattedSeconds}s`;
+}
+
+const promoCode = 'LESBEAUXJOURS';
+const endDate = new Date('2023-06-01');
+
+const promoCodeElement = document.getElementById('promo-code');
+promoCodeElement.innerHTML = promoCode;
+
+function updateRemainingTime() {
+  const now = new Date();
+  const diff = Math.floor((endDate - now) / 1000);
+
+  if (diff > 0) {
+    const days = Math.floor(diff / (60 * 60 * 24));
+    const hours = Math.floor((diff % (60 * 60 * 24)) / (60 * 60));
+    const minutes = Math.floor((diff % (60 * 60)) / 60);
+    const seconds = Math.floor(diff % 60);
+
+    const timeRemaining = formatTimeRemaining(days, hours, minutes, seconds);
+    document.getElementById('time-remaining').innerText = `Finit dans : ${timeRemaining}`;
+
+    setTimeout(updateRemainingTime, 1000);
+  }
+}
+
+updateRemainingTime();
+  let cartCount = 0;
+  let favCount = 0;
+  function addToCart(button) {
+    cartCount++;
+    document.getElementById('cart-count').textContent = cartCount;
+    const card = button.closest('.card');
+    const productId = button.parentElement.id.replace('product-', '');
+    const sizeDropdown = card.querySelector('.size-dropdown');
+    const Size = sizeDropdown.value;
+
+    // Ajouter l'article au panier dans la base de données
+    fetch('/addToCart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ productId, size: Size, quantite: 1 }) // Inclure l'ID du produit et la taille dans le corps de la requête POST
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  }
+
+  function addToFav(button) {
+    favCount++;
+    document.getElementById('fav-count').textContent = favCount;
+    const card = button.closest('.card');
+    const productId = button.parentElement.id.replace('product-', '');
+    const sizeDropdown = card.querySelector('.size-dropdown');
+    const Size = sizeDropdown.value;
+
+    // Ajouter l'article au panier dans la base de données
+    fetch('/addToFav', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ productId, size: Size, quantite: 1 }) // Inclure l'ID du produit et la taille dans le corps de la requête POST
+    })
+      .then(response => response.json())
+      .then(data => console.log(data))
+      .catch(error => console.error(error));
+  }
+
+  window.onload = () => {
+  // Récupérer le nombre d'articles du panier lors du chargement initial de la page
+  fetch('/getCartCount')
+    .then(response => response.json())
+    .then(data => {
+      if (data.cartCount) {
+        updateCartCount(data.cartCount); // Mettre à jour le nombre d'articles du panier avec la valeur renvoyée par le serveur
+      }
+    })
+    .catch(error => console.error(error));
+
+  // Récupérer le nombre d'articles du favori lors du chargement initial de la page
+  fetch('/getFavCount')
+    .then(response => response.json())
+    .then(data => {
+      if (data.favCount) {
+        updateFavCount(data.favCount); // Mettre à jour le nombre d'articles du favori avec la valeur renvoyée par le serveur
+      }
+    })
+    .catch(error => console.error(error));
+};
+
+
+function updateCartCount(n){
+  cartCount=n;
+  document.getElementById('cart-count').textContent = cartCount;
+}
+
+
+function updateFavCount(n){
+  favCount=n;
+  document.getElementById('fav-count').textContent = favCount;
+}
+
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const imageWrappers = document.querySelectorAll('.image-wrapper');
+    imageWrappers.forEach(function(wrapper) {
+      const overlay = wrapper.querySelector('.overlay');
+      wrapper.addEventListener('mouseover', function(event) {
+        overlay.style.display = 'block';
+      });
+      wrapper.addEventListener('mouseout', function(event) {
+        overlay.style.display = 'none';
+      });
+    });
+  });
+</script>
+  
+</body>
+
+</html>
